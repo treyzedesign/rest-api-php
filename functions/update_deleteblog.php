@@ -56,7 +56,7 @@ function updateBlog(){
         http_response_code(400);
         $message = "All fields are required";
         $response = array("status" => "Fail", "message" => $message);
-        return json_encode($response);
+        return $response;
     }
 
     $title = esc($data->title);

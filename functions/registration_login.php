@@ -2,12 +2,13 @@
 <?php 
 function registerUser (){
     global $conn;
+
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         $sql = "SELECT * FROM users";
         $query = mysqli_query($conn, $sql);
         $result = mysqli_fetch_all($query, MYSQLI_ASSOC);
         if(count($result) < 1){ 
-             $data = file_get_contents("php://input");
+                $data = file_get_contents("php://input");
                 $data = json_decode($data);
                 $email = $data->email;
                 $password = $data->password;
@@ -18,7 +19,7 @@ function registerUser (){
                     http_response_code(400);
                     $message = "All fields are required";
                     $response = array("status" => "Fail", "message" => $message);
-                    return json_encode($response);
+                    return $response;
                 }
                 $email = esc($data->email);
                 $password = esc($data->password);
@@ -32,7 +33,6 @@ function registerUser (){
                     $response = array("status" => "Fail", "message" => $message);
                     return json_encode($response);
                 }
-
                 $password = md5($password);
                 $sql = "INSERT INTO users (`email`, `password`, `role`, `lname`, `fname`) VALUES ('$email','$password', '$role', '$lname', '$fname')";
                 $query = mysqli_query($conn, $sql);
@@ -63,7 +63,7 @@ function registerUser (){
                     http_response_code(400);
                     $message = "All fields are required";
                     $response = array("status" => "Fail", "message" => $message);
-                    return json_encode($response);
+                    return $response;
             }
 
             $password = esc($data->password);
@@ -78,7 +78,7 @@ function registerUser (){
                     http_response_code(400);
                     $message =  "User with this email already exists";
                     $response = array("status" => "Fail", "message" => $message);
-                    return json_encode($response);
+                    return $response;
             }
             $role = "user";
             if($password != $cpassword){
@@ -98,14 +98,18 @@ function registerUser (){
                 $result = mysqli_fetch_assoc($getUser);
                 http_response_code(201);
                 $message = "User created successfully";
-                $response = array("status" => "Fail", "message" => $message, "data" => $result);
+                $response = array("status" => "Success", "message" => $message, "data" => $result);
                 return $response;
                 
             } 
 
      }
     }
-    mysqli_close($conn);
+
+        $message = "Bad request method";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
+    
     }
 
 
@@ -117,10 +121,10 @@ function loginUser () {
          $email = $data->email;
          $password = $data->password;
          if(!$email || !$password){
-             http_response_code(400);
+                http_response_code(400);
                 $message = "All fields are required";
                 $response = array("status" => "Fail", "message" => $message);
-                return json_encode($response);
+                return $response;
          }
         $email = esc($data->email);
         $password = esc($data->password);
@@ -132,20 +136,23 @@ function loginUser () {
             if($user["password"] != md5($password)){
                 $message = "Invalid Credentials";
                 $response = array("status" => "Fail", "message" => $message);
-                return json_encode($response);
+                return $response;
             }
             $user_sql = "SELECT `email`, `id`, `role` FROM `users` WHERE `email`='$email' LIMIT 1";
              $user_result = mysqli_query($conn, $user_sql);
              $user_detail = mysqli_fetch_assoc($user_result);
              http_response_code(200);
                 $message = "User login successfully";
-                $response = array("status" => "Fail", "message" => $message, "data" => $user_detail);
+                $response = array("status" => "Success", "message" => $message, "data" => $user_detail);
                 return $response;
         }
                 $message = "Something went wrong try again";
                 $response = array("status" => "Fail", "message" => $message);
                 return $response;
     }
+        $message = "Bad request method";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
 }
 
 function esc(String $value)

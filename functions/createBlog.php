@@ -41,10 +41,10 @@ function createBlog() {
     }
         http_response_code(201);
         $message = "Blog created successfully";
-        $response = array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Success", "message" => $message);
         return $response;
 }else{
-    http_response_code(400);
+        http_response_code(400);
         $message = "Bad request";
         $response = array("status" => "Fail", "message" => $message);
         return $response;

@@ -10,4 +10,4 @@ header("Access-Control-Allow-Headers: *");
 header("Content-type: application/json");
 
 
-echo $login;
+echo json_encode($login);

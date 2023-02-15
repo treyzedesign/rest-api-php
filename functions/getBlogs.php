@@ -8,7 +8,7 @@ function getAllBlogs(){
         $blog_result = mysqli_query($conn, $blog_sql);
         $blogs = mysqli_fetch_all($blog_result, MYSQLI_ASSOC);
         if(count($blogs) < 1){
-            http_response_code(404);
+        http_response_code(404);
         $message =  "No blogs yet";
         $response = array("status" => "Fail", "message" => $message);
         return $response;
