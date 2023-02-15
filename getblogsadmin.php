@@ -14,7 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
    if(isset($paths[2])){
     if($paths[2] == "blogs"){
         http_response_code(200);
-        echo $blogs;
+        echo json_encode($blogs);
         
         exit;
     }else{

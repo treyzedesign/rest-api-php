@@ -3,12 +3,11 @@
 
 function removeRole(){
 global $conn;
-$message = "";
 if($_SERVER["REQUEST_METHOD"] == "DELETE"){
 if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
-
+        http_response_code(401);
         $message = "Unauthorized";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     };
     $get_id = $_SERVER["HTTP_AUTHORIZATION"];
@@ -19,15 +18,17 @@ if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
     $role = mysqli_fetch_assoc($result);
     if(!$role){
         http_response_code(401);
-        return "Unauthorized User";
+        $message = "Unauthorized";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
         
     }
     if($role["name"] == "Super-admin"){
         
         $path = explode("/", $_SERVER["REQUEST_URI"]);
         if(!isset($path[2])) {
-        $message = "Bad request";
-            $response = (object) array("status" => "Fail", "message" => $message );
+            $message = "Bad request";
+            $response = array("status" => "Fail", "message" => $message );
             return $response; 
         }
         $id = $path[2];
@@ -35,18 +36,18 @@ if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
         $query = mysqli_query($conn, $sql);
         if($query){
             $message = "Role with id " . $id . " successfully deleted";
-            $response = (object) array("status" => "Fail", "message" => $message );
+            $response = array("status" => "Fail", "message" => $message );
             return $response;  
         }else{
             $message = "Something went wrong";
-            $response = (object) array("status" => "Fail", "message" => $message );
+            $response = array("status" => "Fail", "message" => $message );
             return $response; 
         }
     }
 }
 
             $message = "Bad request, Not the accepted request method";
-            $response = (object) array("status" => "Fail", "message" => $message );
+            $response = array("status" => "Fail", "message" => $message );
             return $response; 
 
 }

@@ -8,10 +8,15 @@ function getAllBlogs(){
         $blog_result = mysqli_query($conn, $blog_sql);
         $blogs = mysqli_fetch_all($blog_result, MYSQLI_ASSOC);
         if(count($blogs) < 1){
-            return "No blogs yet";
+            http_response_code(404);
+        $message =  "No blogs yet";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
         }
+        http_response_code(200);
+        $response = array("status" => "Success", "data" => $blogs);
+        return $response;
 
-    return json_encode($blogs);    
 }
 // mysqli_close($conn);
 
@@ -33,13 +38,18 @@ function getSingleBlog() {
         $sql = "SELECT * FROM blogs WHERE id='$id'";
         $query = mysqli_query($conn, $sql);
         $result = mysqli_fetch_assoc($query);
-        if(!$result){
-            return "No blog with matching id";
+        if(!$query){
+            $message =  "Something went wrong";
+            $response = array("status" => "Fail", "message" => $message);
+            return $response;
         }
-        if(count($result) < 1){
-            return "No blog with matching id";
+        if(mysqli_num_rows($query) < 1){
+            $message =   "No blog with matching id";
+            $response = array("status" => "Fail", "message" => $message);
+            return $response;
         }
-        return json_encode($result);
+            $response = array("status" => "Success", "message" => $result);
+            return $response;
 
 
     }else{
@@ -49,13 +59,18 @@ function getSingleBlog() {
 
         $query = mysqli_query($conn, $sql);
         $result = mysqli_fetch_assoc($query);
-        if(!$result){
-            return "No blog with matching id";
+        if(!$query){
+            $message =   "Something went wrong";
+            $response = array("status" => "Fail", "message" => $message);
+            return $response;
         }
-        if(count($result) < 1){
-            return "No blog with matching id";
+        if(mysqli_num_rows($query) != 1){
+            $message =   "No blog with matching id";
+            $response = array("status" => "Fail", "message" => $message);
+            return $response;
         }
-        return json_encode($result);
+            $response = array("status" => "Success", "message" => $result);
+            return $response;
     }
        
 }
@@ -63,13 +78,18 @@ function getSingleBlog() {
 
         $query = mysqli_query($conn, $sql);
         $result = mysqli_fetch_assoc($query);
-        if(!$result){
-            return "Unauthorized to view this blog";
+        if(!$query){
+            $message =   "Something went wrong";
+            $response = array("status" => "Fail", "message" => $message);
+            return $response;
         }
-        if(count($result) < 1){
-            return "No blog with matching id";
+        if(mysqli_num_rows($query) < 1){
+            $message =   "No blog with matching id";
+            $response = array("status" => "Fail", "message" => $message);
+            return $response;
         }
-        return json_encode($result);
+            $response = array("status" => "Success", "message" => $result);
+            return $response;
     }
     return "Couldn't find the resource you are looking for";
 }

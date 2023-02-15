@@ -15,7 +15,7 @@ function updateBlog(){
     if(mysqli_num_rows($user_query) != 1){
         http_response_code(401);
         $message = "Unauthorized User";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
     $user_policies = $user_result["policies"];
@@ -30,14 +30,17 @@ function updateBlog(){
     
     if(!in_array("can-update-blog", $policy_array)){
         $message = "Unauthorized";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
 
     
     $path = explode("/", $_SERVER["REQUEST_URI"]);
     if(!isset($path[3])) {
-        return "Bad Request";
+         http_response_code(400);
+        $message = "Bad request";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
     }
     $data = file_get_contents("php://input");
     $data = json_decode($data);
@@ -64,29 +67,32 @@ function updateBlog(){
     $sql = "SELECT * FROM blogs WHERE id = '$id' LIMIT 1";
     $query = mysqli_query($conn, $sql);
     if(mysqli_num_rows($query) != 1){
+        http_response_code(404);
         $message = "No blog with matching id";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
     $update_sql = "UPDATE blogs SET `title`='$title', `content`='$content', `category_id`='$category', `published`='$published', `author`='$author_id', updated_at=now() WHERE id='$id'";
     $update_query = mysqli_query($conn, $update_sql);
     if(!$update_query){
+        http_response_code(500);
          $message = "Something went wrong, try again";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
-     $message =  "Blog with id " . $id . " successfully updated";
-        $response = (object) array("status" => "Success", "message" => $message);
+        http_response_code(201);
+        $message =  "Blog with id " . $id . " successfully updated";
+        $response = array("status" => "Success", "message" => $message);
         return $response;
 }
 
-
+}
 function deleteBlog(){
     global $conn;
     if($_SERVER["REQUEST_METHOD"] == "DELETE"){
         if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
         $message = "Unauthorized User";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     };
     $get_id = $_SERVER["HTTP_AUTHORIZATION"];
@@ -97,7 +103,7 @@ function deleteBlog(){
     if(mysqli_num_rows($user_query) != 1){
         http_response_code(401);
         $message = "Unauthorized User";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
 
@@ -112,41 +118,49 @@ function deleteBlog(){
     array_push($policy_array, $policy_result["privileges"]);
     }
     if(!in_array("can-delete-blog", $policy_array)){
+        http_response_code(401);
         $message = "Unauthorized";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
 
     $path = explode("/", $_SERVER["REQUEST_URI"]);
     if(!isset($path[3])) {
-        return "Bad Request";
+        http_response_code(400);
+        $message = "Bad request";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
     }
     $id = $path[3];
     $sql = "SELECT * FROM blogs WHERE id = '$id' LIMIT 1";
     $query = mysqli_query($conn, $sql);
     $result = mysqli_fetch_assoc($query);
-    if(mysqli_num_rows(json_decode($result)) < 1){
+    if(mysqli_num_rows($query) < 1){
+        http_response_code(404);
         $message = "No blog with matching id";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
     $delete_sql = "DELETE FROM blogs WHERE id='$id'";
     $result = mysqli_query($conn, $delete_sql);
     if(!$result){
-        
+        http_response_code(500);
         $message = "Something went wrong, try again";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     }
-    $message =  "Blog with id " . $id . " successfully deleted";
-        $response = (object) array("status" => "Fail", "message" => $message);
+    http_response_code(200);
+        $message =  "Blog with id " . $id . " successfully deleted";
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
      }
+     http_response_code(400);
+     $message =  "Bad request";
+     $response = array("status" => "Fail", "message" => $message);
+     return $response;
     }
-        $message =  "Bad request";
-        $response = (object) array("status" => "Fail", "message" => $message);
-        return $response;
-}
+
+
 
 function esc(String $value)
 	{	

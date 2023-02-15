@@ -1,16 +1,5 @@
+<?php include("../config.php"); ?>
 <?php
-
-$HOST = 'localhost';
-$USER = 'root';
-$PASSWORD = 'Kanayo10.10';
-$DB = 'cyclobold_blog';
-$conn = mysqli_connect($HOST, $USER, $PASSWORD, $DB);
-
-if(!$conn){
-    
-     die('Failed to connect to database' . mysqli_connect_error());
-}
-
 function createBlog() {
     if($_SERVER["REQUEST_METHOD"] = "POST"){
     global $conn;
@@ -24,7 +13,9 @@ function createBlog() {
     $user_query = mysqli_query($conn, $user_sql);
     if(mysqli_num_rows($user_query) != 1){
         http_response_code(401);
-        return "Unauthorized User";
+        $message = "Unauthorized User";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
     }
     $data = file_get_contents("php://input");
     $data = json_decode($data);
@@ -33,7 +24,9 @@ function createBlog() {
     $category = $data->category_id;
     if(!$title || !$content || !$category){
         http_response_code(400);
-        return "All fields are required";
+        $message = "All fields are required";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
     }
     $title = esc($data->title);
     $content = esc($data->content);
@@ -42,13 +35,19 @@ function createBlog() {
     $query = mysqli_query($conn, $sql);
     if(!$query){
         http_response_code(500);
-        return "Something went wrong, try again";
+        $message = "Something went wrong, try again";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
     }
-    http_response_code(201);
-    return $id;
+        http_response_code(201);
+        $message = "Blog created successfully";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
 }else{
     http_response_code(400);
-    return "Bad Request";
+        $message = "Bad request";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
 }
 }
 

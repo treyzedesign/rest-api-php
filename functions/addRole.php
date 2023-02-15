@@ -6,35 +6,52 @@ global $conn;
 $message = "";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
-
+        http_response_code(401);
         $message = "Unauthorized";
-        $response = (object) array("status" => "Fail", "message" => $message);
+        $response = array("status" => "Fail", "message" => $message);
         return $response;
     };
     $get_id = $_SERVER["HTTP_AUTHORIZATION"];
     $id = explode(" ", $get_id);
-    $id = $id[1];
-    $sql = "SELECT * FROM  roles WHERE id='$id' LIMIT 1";
-    $result = mysqli_query($conn, $sql);
-    $role = mysqli_fetch_assoc($result);
-    if(!$role){
+    $user_id = $id[1];
+
+    $user_sql = "SELECT * FROM `roles` WHERE `user_id`='$user_id' LIMIT 1";
+    $user_query = mysqli_query($conn, $user_sql);
+    $user_result = mysqli_fetch_assoc($user_query);
+    if(mysqli_num_rows($user_query) != 1){
         http_response_code(401);
-        return "Unauthorized User";
-        
+        $message = "Unauthorized User";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
     }
-    if($role["name"] == "Super-admin" || $role["name"] == "Sub-admin"){
+    $user_policies = $user_result["policies"];
+    $user_policies = json_decode($user_policies);
+    $policy_array = [];
+    for($i = 0; $i < count($user_policies); $i++){
+    $priv_sql = "SELECT * FROM `policies` WHERE id='$user_policies[$i]'";
+    $policy_query = mysqli_query($conn, $priv_sql);
+    $policy_result = mysqli_fetch_assoc($policy_query);
+    array_push($policy_array, $policy_result["privileges"]);
+    }
+    
+    if(!in_array("can-create-admin", $policy_array)){
+        $message = "Unauthorized";
+        $response = array("status" => "Fail", "message" => $message);
+        return $response;
+    }
+
         $data = json_decode(file_get_contents("php://input"));
         $user_id = $data->user_id;
         $policies = $data->policies;
         $name = $data->name;
         if(!$user_id || !$policies || !$name){
             $message = "All fields are required";
-            $response = (object) array("status" => "Fail", "message" => $message );
+            $response = array("status" => "Fail", "message" => $message );
             return $response;
         }
         if(!count($policies)){
             $message = "Policies must be assigned to user";
-            $response = (object) array("status" => "Fail", "message" => $message );
+            $response = array("status" => "Fail", "message" => $message );
             return $response; 
         }
         $policy_id_arrays = [];
@@ -48,20 +65,19 @@ if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
         $create_role_sql = "INSERT INTO roles (`user_id`, `policies`, `name`) VALUES ('$user_id', '$policy_id_arrays', '$name')";
         $role_query = mysqli_query($conn, $create_role_sql);
         if($role_query){
-
             $message = "Role successfully created";
-            $response = (object) array("status" => "Success", "message" => $message );
+            $response = array("status" => "Success", "message" => $message );
             return $response;    
         }else{
             $message = "Something went wrong, try again";
-            $response = (object) array("status" => "Failed", "message" => $message );
+            $response = array("status" => "Failed", "message" => $message );
             return $response; 
         }
-    }
+    
 }
 
             $message = "Bad request, Not the accepted request method";
-            $response = (object) array("status" => "Fail", "message" => $message );
+            $response = array("status" => "Fail", "message" => $message );
             return $response; 
 
 }
