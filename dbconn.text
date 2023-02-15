@@ -14,5 +14,16 @@ if(!$conn){
      die('Failed to connect to database' . mysqli_connect_error());
 }
 
+
+$user_table =  "CREATE TABLE users (`id` INT(11) NOT NULL PRIMARY KEY  AUTO_INCREMENT, `email` VARCHAR(255) NOT NULL, `password` VARCHAR(255)  NOT NULL, `role` VARCHAR(255) NOT NULL, `lname` VARCHAR(255) NOT NULL, `fname` VARCHAR(255) NOT NULL, `created_at` TIMESTAMP DEFAULT now(), `updated_at` TIMESTAMP DEFAULT now())";
+
+$role_table = "CREATE TABLE roles (id INT(11) NOT NULL PRIMARY KEY  AUTO_INCREMENT, name VARCHAR(255) NOT NULL, policies TEXT  NOT NULL, user_id INT(11) NOT NULL, created_at TIMESTAMP DEFAULT now(), updated_at TIMESTAMP DEFAULT now(), FOREIGN KEY (`user_id`) REFERENCES users (`id`))";
+
+$policy_table = "CREATE TABLE policies (id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, privileges VARCHAR(255) NOT NULL)";
+$policy_data = " INSERT INTO policies (privileges) VALUES ('can-update-blog'),('can-delete-blog'),('can-create-admin'), ('can-delete-user')";
+
+$categories_table = "CREATE TABLE policies (id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, category VARCHAR(255) NOT NULL)";
+$policy_data = " INSERT INTO policies (category) VALUES ('Frontend Development'),('Backend Development'), ('Fullstack Development'), ('UI/UX'), ("Data Analytic"), ("Cyber Security")";
+
 define('ROOT_PATH', realpath(dirname(__FILE__)));
 define('BASE_URL', 'http://localhost:8080');
