@@ -10,6 +10,7 @@ header("Content-type: application/json");
 
 
 
-    echo $blog;
+    // echo $blog;
+    echo json_encode($blog);
     exit;
   

@@ -1,12 +1,5 @@
+<?php include("../config.php") ?>
 <?php 
-
-
-$HOST = 'localhost';
-$USER = 'root';
-$PASSWORD = 'Kanayo10.10';
-$DB = 'cyclobold_blog';
-
-$conn = mysqli_connect($HOST, $USER, $PASSWORD, $DB);
 function registerUser (){
     global $conn;
     if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -114,8 +107,6 @@ function loginUser () {
             if($user["password"] != md5($password)){
                 return "Invalid Credentials";
             }
-                $_SESSION["USER_ID"] = $user["id"];
-                $_SESSION["USER_ROLE"] = $user["role"];
             return $user["email"];
         }
         return "Something went wrong, try again";

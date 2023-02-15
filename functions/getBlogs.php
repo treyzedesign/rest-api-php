@@ -1,14 +1,5 @@
+<?php include("../config.php") ?>
 <?php 
-
-$HOST = 'localhost';
-$USER = 'root';
-$PASSWORD = 'Kanayo10.10';
-$DB = 'cyclobold_blog';
-$conn = mysqli_connect($HOST, $USER, $PASSWORD, $DB);
-if(!$conn){
-    
-     die('Failed to connect to database' . mysqli_connect_error());
-}
 
 $paths = explode("/", $_SERVER['REQUEST_URI']);
 function getAllBlogs(){
@@ -22,6 +13,7 @@ function getAllBlogs(){
 
     return json_encode($blogs);    
 }
+// mysqli_close($conn);
 
 function getSingleBlog() {
     global $conn;
@@ -36,7 +28,7 @@ function getSingleBlog() {
     $sql = "SELECT * FROM  roles WHERE id='$query_id' LIMIT 1";
     $result = mysqli_query($conn, $sql);
     $role = mysqli_fetch_assoc($result);
-    if($role["description"] == "Super-admin" || $role["description"] == "Editor admin"){
+    if($role["name"] == "Super-admin" || $role["name"] == "Editor-admin"){
 
         $sql = "SELECT * FROM blogs WHERE id='$id'";
         $query = mysqli_query($conn, $sql);
