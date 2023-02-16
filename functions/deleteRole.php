@@ -13,7 +13,7 @@ if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
     $get_id = $_SERVER["HTTP_AUTHORIZATION"];
     $id = explode(" ", $get_id);
     $user_id = $id[1];
-    $sql = "SELECT * FROM  roles WHERE id=? LIMIT 1";
+    $sql = "SELECT * FROM  `roles` WHERE `user_id` = ? LIMIT 1";
     $query = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($query, "i", $user_id);
     mysqli_stmt_execute($query);
@@ -36,7 +36,7 @@ if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
             return $response; 
         }
         $user_id = $path[2];
-        $sql = "DELETE FROM roles WHERE user_id = ?";
+        $sql = "DELETE FROM `roles` WHERE `user_id` = ?";
         $query = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($query, "i", $user_id);
         mysqli_stmt_execute($query);
