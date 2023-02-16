@@ -22,8 +22,8 @@ $role_table = "CREATE TABLE roles (id INT(11) NOT NULL PRIMARY KEY  AUTO_INCREME
 $policy_table = "CREATE TABLE policies (id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, privileges VARCHAR(255) NOT NULL)";
 $policy_data = " INSERT INTO policies (privileges) VALUES ('can-update-blog'),('can-delete-blog'),('can-create-admin'), ('can-delete-user')";
 
-$categories_table = "CREATE TABLE policies (id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, category VARCHAR(255) NOT NULL)";
-$policy_data = " INSERT INTO policies (category) VALUES ('Frontend Development'),('Backend Development'), ('Fullstack Development'), ('UI/UX'), ("Data Analytic"), ("Cyber Security")";
+$categories_table = "CREATE TABLE categories (id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, category VARCHAR(255) NOT NULL)";
+$categories_data = " INSERT INTO categories (category) VALUES ('Frontend Development'),('Backend Development'), ('Fullstack Development'), ('UI/UX'), ("Data Analytic"), ("Cyber Security")";
 
 define('ROOT_PATH', realpath(dirname(__FILE__)));
 define('BASE_URL', 'http://localhost:8080');

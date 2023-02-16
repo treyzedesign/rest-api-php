@@ -8,10 +8,13 @@ function getAdminBlogs(){
     $get_id = $_SERVER["HTTP_AUTHORIZATION"];
     $id = explode(" ", $get_id);
     $user_id = $id[1];
-    $user_sql = "SELECT * FROM `roles` WHERE `user_id`='$user_id' LIMIT 1";
-    $user_query = mysqli_query($conn, $user_sql);
-    $user_result = mysqli_fetch_assoc($user_query);
-    if(mysqli_num_rows($user_query) != 1){
+    $user_sql = "SELECT * FROM `roles` WHERE `user_id`=? LIMIT 1";
+    $user_query = mysqli_prepare($conn, $user_sql);
+    mysqli_stmt_bind_param($user_query, "i", $user_id);
+    mysqli_stmt_execute($user_query);
+    $stmt_result = mysqli_stmt_get_result($user_query);
+    $user_result = mysqli_fetch_assoc($stmt_result);
+    if(mysqli_num_rows($stmt_result) != 1){
         http_response_code(401);
         $message = "Unauthorized User";
         $response = array("status" => "Fail", "message" => $message);
@@ -21,9 +24,12 @@ function getAdminBlogs(){
     $user_policies = json_decode($user_policies);
     $policy_array = [];
     for($i = 0; $i < count($user_policies); $i++){
-    $priv_sql = "SELECT * FROM `policies` WHERE id='$user_policies[$i]'";
-    $policy_query = mysqli_query($conn, $priv_sql);
-    $policy_result = mysqli_fetch_assoc($policy_query);
+    $priv_sql = "SELECT * FROM `policies` WHERE id=?";
+    $policy_query = mysqli_prepare($conn, $priv_sql);
+    mysqli_stmt_bind_param($policy_query, "i", $user_policies[$i]);
+    mysqli_stmt_execute($policy_query);
+    $stmt_result = mysqli_stmt_get_result($policy_query);
+    $policy_result = mysqli_fetch_assoc($stmt_result);
     array_push($policy_array, $policy_result["privileges"]);
     }
     

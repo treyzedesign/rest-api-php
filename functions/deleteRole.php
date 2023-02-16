@@ -12,11 +12,14 @@ if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
     };
     $get_id = $_SERVER["HTTP_AUTHORIZATION"];
     $id = explode(" ", $get_id);
-    $id = $id[1];
-    $sql = "SELECT * FROM  roles WHERE id='$id' LIMIT 1";
-    $result = mysqli_query($conn, $sql);
-    $role = mysqli_fetch_assoc($result);
-    if(mysqli_num_rows($result)){
+    $user_id = $id[1];
+    $sql = "SELECT * FROM  roles WHERE id=? LIMIT 1";
+    $query = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($query, "i", $user_id);
+    mysqli_stmt_execute($query);
+    $stmt_result = mysqli_stmt_get_result($query);
+    $role = mysqli_fetch_assoc($stmt_result);
+    if(mysqli_num_rows($stmt_result)){
         http_response_code(401);
         $message = "Unauthorized";
         $response = array("status" => "Fail", "message" => $message);
@@ -33,8 +36,10 @@ if(!isset($_SERVER["HTTP_AUTHORIZATION"])){
             return $response; 
         }
         $user_id = $path[2];
-        $sql = "DELETE FROM roles WHERE user_id='$user_id'";
-        $query = mysqli_query($conn, $sql);
+        $sql = "DELETE FROM roles WHERE user_id = ?";
+        $query = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($query, "i", $user_id);
+        mysqli_stmt_execute($query);
         if($query){
             http_response_code(200);
             $message = "Role with id " . $id . " successfully deleted";

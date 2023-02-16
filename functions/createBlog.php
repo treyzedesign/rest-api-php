@@ -8,10 +8,13 @@ function createBlog() {
     };
     $get_id = $_SERVER["HTTP_AUTHORIZATION"];
     $id = explode(" ", $get_id);
-    $id = $id[1];
-    $user_sql = "SELECT * FROM users WHERE id='$id' LIMIT 1";
-    $user_query = mysqli_query($conn, $user_sql);
-    if(mysqli_num_rows($user_query) != 1){
+    $user_id = $id[1];
+    $user_sql = "SELECT * FROM users WHERE id=? LIMIT 1";
+    $user_query = mysqli_prepare($conn, $user_sql);
+    mysqli_stmt_bind_param($user_query, 'i', $user_id);
+    mysqli_stmt_execute($user_query);
+    $stmt_user_result = mysqli_stmt_get_result($user_query);
+    if(mysqli_num_rows($stmt_user_result) != 1){
         http_response_code(401);
         $message = "Unauthorized User";
         $response = array("status" => "Fail", "message" => $message);
@@ -31,8 +34,10 @@ function createBlog() {
     $title = esc($data->title);
     $content = esc($data->content);
     $category = esc($data->category_id);
-    $sql = "INSERT INTO blogs (`title`, `content`, `author`, `category_id`) VALUES ('$title', '$content', '$id', '$category')";
-    $query = mysqli_query($conn, $sql);
+    $sql = "INSERT INTO blogs (`title`, `content`, `author`, `category_id`) VALUES (?,?,?,?)";
+    $query = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($query, "ssii", $title, $content, $user_id, $category);
+    mysqli_stmt_execute($query);
     if(!$query){
         http_response_code(500);
         $message = "Something went wrong, try again";
