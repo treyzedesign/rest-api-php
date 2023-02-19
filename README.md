@@ -5,7 +5,7 @@ This Role-Based-Access-Contol blogging system allows an enterprise to manage and
 by restricting network access based on the roles of individual users within that enterprise.
 
 * LANGUAGE : PHP
-* DATAbASE : MySQL
+* DATABASE : MySQL
 * TABLES
   - users
   - roles
@@ -21,8 +21,8 @@ by restricting network access based on the roles of individual users within that
   - The user should provide thier required details : fisrtname, lastname, email and password
 
   - url: localhost:8080/register.php
-    method: POST
-    request body: 
+  -  method: POST
+  -  request body: 
      ```
       {
           "email": "email@email.com",
@@ -39,8 +39,8 @@ by restricting network access based on the roles of individual users within that
   - The user should provide thier required details : email and password
 
   - url: localhost:8080/login.php
-    method: POST
-    request body:
+  -  method: POST
+  -  request body:
     ```
     {
         "email": "email@email.com",
@@ -54,9 +54,9 @@ by restricting network access based on the roles of individual users within that
   - This endpoint requires the id of the "Super-admin" for authentication and authorization purposes which will passed in the request header.
   
   - url: localhost:8080/addrole.php 
-    method: POST
-    header : { Authorization: "Bearer {user id}" }
-    request body: 
+  -  method: POST
+  -  header : { Authorization: "Bearer {user id}" }
+  -  request body: 
     ```
     {
       "user_id": 2,
@@ -70,9 +70,9 @@ by restricting network access based on the roles of individual users within that
   - This endpoint requires the id of the "Super-admin" for authentication and authorization purposes which will passed in the request header.
 
   - url: localhost:8080/deleterole.php/{role_id}
-    method: DELETE
-    parameter: role id
-    header: { Authorization: "Bearer {user id}" }
+  -  method: DELETE
+  -  parameter: role id
+  -  header: { Authorization: "Bearer {user id}" }
 
 * Create Blog
   - You have to provide the id of the user so as to determine the author of the the blog.
@@ -96,15 +96,15 @@ by restricting network access based on the roles of individual users within that
   - This blogs will be restricted to specific role
 
   - url: localhost:8080/getblogsadmin/blogs
-    method: GET
-    header: {Authorization: "Bearer {user_id}"}
+  -  method: GET
+  -  header: {Authorization: "Bearer {user_id}"}
 
 * Get all published blogs
   - This endpoint allows us to get all published blogs
   - This blog will be accessible to every roles
 
   - url: localhost:8080/getblogs.php/blogs
-    method: GET
+  - method: GET
 
 * Get single blog
   - This endpoint requires the id of the user for authentication and Authorization purposes which will passed in the request header
@@ -112,19 +112,19 @@ by restricting network access based on the roles of individual users within that
   - Only the Role of the "Super-admin" and "Editor-admin" have the permissions to get a single blog.
 
   - url: localhost:8080/getblogs.php/blogs/{id}
-    parameter: blog id
-    method: GET
-    header: {Authorization: "Bearer {user_id}"}
+  - parameter: blog id
+  - method: GET
+  - header: {Authorization: "Bearer {user_id}"}
 
 * update blog
   - This endpoint requires the id of the user for authentication and authorization purposes which will passed in the request header
   - This endpoint requires the id of the blog to be found blogs table
 
   - url:localhost:8080/updateblog.php/blogs/{id}
-    parameter: blog id
-    method: PUT or PATCH
-    header: {Authorization: "Bearer {user id}" }
-    request body:
+  - parameter: blog id
+  - method: PUT or PATCH
+  - header: {Authorization: "Bearer {user id}" }
+  - request body:
     ```
     {
         "title" : "PHP Explained",
@@ -133,15 +133,15 @@ by restricting network access based on the roles of individual users within that
         "published: "1" or "0"
     }
     ```
-+ 
+
 * delete blogs
   - This endpoint requires the id of the user for authentication and authorization purposes which will passed in the request header
   - This endpoint requires the id of the blog to be found blogs table 
 
   - url:localhost:8080/deleteblog.php/blogs/{id}
-    parameter: blog id
-    method: DELETE
-    header: { Authorization: "Bearer {user id}" }
+  - parameter: blog id
+  - method: DELETE
+  - header: { Authorization: "Bearer {user id}" }
 
 * get users
   - This endpoint requires the id of the user for authentication and authorization purposes which will passed in the request header
@@ -156,6 +156,6 @@ by restricting network access based on the roles of individual users within that
   - This endpoint requires the id of the blog to be found blogs table 
 
   - url: localhost:8080/deleteuser.php/blogs/{id}
-    parameter: user id
-    method : DELETE
-    header : { Authorization: "Bearer {user id}"}
+  - parameter: user id
+  -  method : DELETE
+  - header : { Authorization: "Bearer {user id}"}
